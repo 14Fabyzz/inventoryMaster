@@ -1,51 +1,32 @@
-import db from '../config/config-db';
+import ProductRepository from '../repositories/productRepository';
 import Product from '../Dto/productoDto';
 
-export const ProductService = {
-  create: async (data: Product) => {
-    const [result] = await db.execute(
-      'INSERT INTO productos (nombre, descripcion, precio, stock) VALUES (?, ?, ?, ?)',
-      [data.nombre, data.descripcion, data.precio, data.stock]
-    );
+class ProductService {
 
-    const insertId = (result as any).insertId;
+    static async addProduct(product: Product) {
+        return await ProductRepository.add(product);
+    }
 
-    return {
-      id: insertId,
-      nombre: data.nombre,
-      descripcion: data.descripcion,
-      precio: data.precio,
-      stock: data.stock,
-    };
-  },
+    static async getAllProducts() {
+        return await ProductRepository.getAllProducts();
+    }
 
-  getAll: async () => {
-    const [rows] = await db.execute('SELECT * FROM productos');
-    return rows;
-  },
+    static async getProductById(id: number) {
+        return await ProductRepository.getProductById(id);
+    }
 
-  getById: async (id: number) => {
-    const [rows]: any = await db.execute('SELECT * FROM productos WHERE id = ?', [id]);
-    return rows[0] || null;
-  },
+    static async updateProduct(id: number, product: Product) {
+        return await ProductRepository.updateProduct(id, product);
+    }
 
-  update: async (id: number, data: Product) => {
-    await db.execute(
-      'UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, stock = ? WHERE id = ?',
-      [data.nombre, data.descripcion, data.precio, data.stock, id]
-    );
-    return { id, ...data };
-  },
+    static async deleteProduct(id: number) {
+        return await ProductRepository.deleteProduct(id);
+    }
 
-  delete: async (id: number) => {
-    await db.execute('DELETE FROM productos WHERE id = ?', [id]);
-  },
+    static async updateDescripcion(id: number, descripcion: string) {
+        return await ProductRepository.updateDescripcion(id, descripcion);
+    }
 
-  updateDescripcion: async (id: number, descripcion: string) => {
-    await db.execute(
-      'UPDATE productos SET descripcion = ? WHERE id = ?',
-      [descripcion, id]
-    );
-  }, 
+}
 
-};
+export default ProductService;
